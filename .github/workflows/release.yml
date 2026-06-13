@@ -1,0 +1,42 @@
+name: 构建并发布 ASCIIPakour（全标签适配）
+
+# 推送任何标签都触发
+on:
+  push:
+    tags:
+      - '*'           # 匹配所有标签
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 编译
+        run: |
+          g++ -std=c++11 -lpthread -O3 -fopenmp -o ASCIIPakour.exe *.cpp
+
+      - name: 打包为 ZIP
+        run: |
+          powershell Compress-Archive -Path ASCIIPakour.exe -DestinationPath ASCIIPakour-Windows.zip
+
+      - name: 创建 Release 并上传
+        uses: softprops/action-gh-release@v2
+        with:
+          # 动态使用当前标签名作为版本号
+          tag_name: ${{ github.ref_name }}
+          name: "ASCIIPakour ${{ github.ref_name }}"
+          body: |
+            ## 📦 构建信息
+            - **源码提交**: `${{ github.sha }}`
+            - **构建环境**: GitHub Actions `windows-latest`
+            - **编译命令**: `g++ -std=c++11 -lpthread -O3 -fopenmp -o ASCIIPakour.exe *.cpp`
+
+            ## 🔒 安全说明
+            此 exe 由 GitHub Actions **完全自动化编译**，构建流程在 `.github/workflows/release.yml` 中公开可查。  
+            你可以点击上方 commit 链接查看对应源码，确编译产物与源码严格对应。
+          files: ASCIIPakour-Windows.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
