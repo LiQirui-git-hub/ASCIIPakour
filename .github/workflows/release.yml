@@ -19,7 +19,7 @@ jobs:
 
       - name: 编译
         run: |
-          g++ -std=c++11 -lpthread -O3 -fopenmp -o ASCIIPakour.exe *.cpp
+          g++ -std=c++11 -lpthread -O3 -fopenmp -static -o ASCIIPakour.exe *.cpp
 
       - name: 打包为 ZIP
         run: |
