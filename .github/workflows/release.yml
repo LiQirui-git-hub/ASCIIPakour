@@ -1,5 +1,8 @@
 name: 构建并发布 ASCIIPakour（全标签适配）
 
+permissions:
+  contents: write      # 允许创建/更新 Release
+
 # 推送任何标签都触发
 on:
   push:
